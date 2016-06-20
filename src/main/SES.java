@@ -1,6 +1,6 @@
 package main;
 
-import models.Solution;
+import models.SolutionSES;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -51,8 +51,8 @@ public class SES {
         }
     }
 
-    public Solution smoothWithBestCoefficient(){
-        Solution solution = calculateBestSolution();
+    public SolutionSES smoothWithBestCoefficient(){
+        SolutionSES solution = calculateBestSolution();
         for(int i = 0; i<data.size(); i++){
             dataSet.setValue(solution.getSmoothedValues().get(i), "Smoothed", data.get(i)[0]);
         }
@@ -68,13 +68,13 @@ public class SES {
         return Math.sqrt(error/(data.size()-1));
     }
 
-    public Solution calculateBestSolution(){
-        Solution bestSolution = null;
+    public SolutionSES calculateBestSolution(){
+        SolutionSES bestSolution = null;
         for(double i = 0.0; i<=1.0; i+=0.1){
             smooth(i);
             double squaredError = squaredError();
             if(bestSolution==null || bestSolution.getSquaredError()>squaredError){
-                bestSolution = new Solution(i, squaredError, smoothedValues);
+                bestSolution = new SolutionSES(i, squaredError, smoothedValues);
             }
         }
         return bestSolution;
