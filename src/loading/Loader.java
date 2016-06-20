@@ -22,8 +22,11 @@ public class Loader {
 	 	List<String[]> dataSet = new ArrayList<>();
 		try {
 				inputStream = new BufferedReader(new FileReader("SwordForecasting.csv"));
-			 	for(int i=0;i<38;i++){
-			 		if(i!=0){
+			 	for(int i=0;i<37;i++){
+					if(i==0){
+						line = inputStream.readLine();
+					}
+			 		else if(i!=0){
 			 			line = inputStream.readLine();
 			 			String[] data = line.split(splitter);
 			 			dataSet.add(data);
