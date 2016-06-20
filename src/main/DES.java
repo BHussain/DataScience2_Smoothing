@@ -31,10 +31,10 @@ public class DES {
     
     public void prepareDataSet(){
     	orderedData = new ArrayList<>();
-    	for(String[] data:data){
+    	for(String[] d:data){
     		RowDES row = new RowDES();
-    		row.setMonth(Integer.parseInt(data[0]));
-    		row.setOriginal(Double.parseDouble(data[1]));
+    		row.setMonth(Integer.parseInt(d[0]));
+    		row.setOriginal(Double.parseDouble(d[1]));
     		row.setSmoothed(0.0);
     		row.setTrend(0.0);
     		row.setForecast(0.0);
@@ -63,6 +63,12 @@ public class DES {
                 + (1-smoothingCoefficient) * (smoothedValue+trendValue);
     	return value;
     }
+
+	public void createOriginal(){
+		for(int i = 0; i < data.size(); i++) {
+			dataSet.setValue(Double.parseDouble(data.get(i)[1]), "Original", data.get(i)[0]);
+		}
+	}
     
     public double calculateTrend(int index){
     	double value = ((orderedData.get(index).getSmoothed() - orderedData.get(index-1).getSmoothed()) * trendCoefficient)
@@ -103,13 +109,6 @@ public class DES {
     				row.setTrend(calculateTrend(k));
     				row.setForecast(calculateForecast(k));
     	    	}
-    			
-    			if(i==0.5 && j==0.5){
-    				for(RowDES row:orderedData){
-    					System.out.println(row.toString());
-    				}
-    				
-    			}
     			
     			/**Compare the found solution with the currently best solution */
 	    		double error = calculateError();

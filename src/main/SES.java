@@ -1,5 +1,6 @@
 package main;
 
+import models.Solution;
 import models.SolutionSES;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class SES {
     private List<String[]> data;
-    private List<Double> smoothedValues;
+    private List<Double> smoothedValues = new ArrayList<>();
     private DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
     public SES(List<String[]> data){
@@ -25,7 +26,7 @@ public class SES {
     }
 
     public void smooth(double coefficient){
-        smoothedValues = new ArrayList<>();
+        smoothedValues.clear();
 
         double total = 0.0;
         int i;
@@ -36,7 +37,7 @@ public class SES {
         double average = total/12;
 
         // coefficient = a
-        for(i = 1; i<data.size(); i++){
+        for(i = 1; i < data.size()+1; i++){
             if(smoothedValues.isEmpty()){
                 smoothedValues.add(i-1, average);
             }
@@ -45,17 +46,23 @@ public class SES {
 
             smoothedValues.add(i, value);
         }
-
-        for(i = 0; i<data.size(); i++){
-            dataSet.setValue(smoothedValues.get(i), "Smoothed", data.get(i)[0]);
-        }
     }
 
     public SolutionSES smoothWithBestCoefficient(){
         SolutionSES solution = calculateBestSolution();
+        List<Double> bestSolutionValues = solution.getSmoothedValues();
         for(int i = 0; i<data.size(); i++){
-            dataSet.setValue(solution.getSmoothedValues().get(i), "Smoothed", data.get(i)[0]);
+            dataSet.setValue(bestSolutionValues.get(i), "Smoothed", data.get(i)[0]);
         }
+
+        List<Double> forecastedValues = new ArrayList<>();
+        for(int i = 0; i<12; i++){
+            double value = bestSolutionValues.get(bestSolutionValues.size() - 1);
+            dataSet.setValue(value, "Smoothed", bestSolutionValues.size() + i + "");
+            forecastedValues.add(value);
+        }
+
+        solution.setForecastedValues(forecastedValues);
         return solution;
     }
 
@@ -70,20 +77,21 @@ public class SES {
 
     public SolutionSES calculateBestSolution(){
         SolutionSES bestSolution = null;
-        for(double i = 0.0; i<=1.0; i+=0.1){
+        for(double i = 0.7; i<=1.0; i+=0.1){
             smooth(i);
             double squaredError = squaredError();
             if(bestSolution==null || bestSolution.getSquaredError()>squaredError){
-                bestSolution = new SolutionSES(i, squaredError, smoothedValues);
+                bestSolution = new SolutionSES(i, squaredError, new ArrayList<>(smoothedValues));
             }
         }
+
         return bestSolution;
     }
 
     public void draw(){
         JFreeChart chart = ChartFactory.createLineChart("Smoothing", "Months", "Demand", dataSet);
         ChartFrame frame = new ChartFrame("Line Chart", chart);
-        frame.setSize(800, 600);
+        frame.setSize(1200, 600);
         frame.setVisible(true);
     }
 }
