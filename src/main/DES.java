@@ -88,7 +88,8 @@ public class DES {
     			error+= Math.pow(row.getForecast()-row.getOriginal(), 2);
     		}
     	}
-    	return Math.sqrt(error/(orderedData.size()-2));
+		// -4 instead of -2 because the forecasted values have 2 less values
+    	return Math.sqrt(error/(orderedData.size()-4));
     }
     
     public void run(){
@@ -166,7 +167,7 @@ public class DES {
     public void draw(){
         JFreeChart chart = ChartFactory.createLineChart("Smoothing", "Months", "Demand", dataSet);
         ChartFrame frame = new ChartFrame("Line Chart", chart);
-        frame.setSize(1200, 600);
+        frame.setSize(1200, 800);
         frame.setVisible(true);
     }
 

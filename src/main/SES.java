@@ -89,7 +89,7 @@ public class SES {
     public void draw(){
         JFreeChart chart = ChartFactory.createLineChart("Smoothing", "Months", "Demand", dataSet);
         ChartFrame frame = new ChartFrame("Line Chart", chart);
-        frame.setSize(1200, 600);
+        frame.setSize(1200, 800);
         frame.setVisible(true);
     }
 }
