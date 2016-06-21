@@ -35,12 +35,10 @@ public class SES {
         }
 
         double average = total/12;
+        smoothedValues.add(0, average);
 
         // coefficient = a
         for(i = 1; i < data.size()+1; i++){
-            if(smoothedValues.isEmpty()){
-                smoothedValues.add(i-1, average);
-            }
             double value = (coefficient * Double.parseDouble(data.get(i-1)[1]))
                     + (1-coefficient) * smoothedValues.get(i-1);
 
